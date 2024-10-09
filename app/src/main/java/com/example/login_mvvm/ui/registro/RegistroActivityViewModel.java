@@ -53,8 +53,7 @@ public class RegistroActivityViewModel extends AndroidViewModel {
     }
 
     public void Guardar(Usuario usr) {
-        Usuario usuario = ApiClient.leerDatos(context);
-        if (usuario != null || !usr.getEmail().equals(usuario.getEmail())) {
+        if (validarUsuario(usr)) {
             ApiClient.guardar(context, usr);
 
             Intent intent = new Intent(context, LoginActivity.class);
@@ -66,14 +65,8 @@ public class RegistroActivityViewModel extends AndroidViewModel {
             avisoVisibilityMutable.setValue(View.VISIBLE);
             Toast.makeText(context.getApplicationContext(), "Usuario registrado", Toast.LENGTH_SHORT).show();
         } else {
-            if (usuario.getEmail().equals(usr.getEmail())) {
-                avisoMutable.setValue("El usuario ya existe");
-                avisoVisibilityMutable.setValue(View.VISIBLE);
-            } else {
-                // O bien, aquí puedes decidir cómo manejar el caso donde el email no coincide
-                avisoMutable.setValue("Email en uso por otro usuario");
-                avisoVisibilityMutable.setValue(View.VISIBLE);
-            }
+            avisoMutable.setValue("Debe completar todos los datos");
+            avisoVisibilityMutable.setValue(View.VISIBLE);
         }
     }
 
@@ -87,6 +80,14 @@ public class RegistroActivityViewModel extends AndroidViewModel {
 
         avisoMutable.setValue("Usuario editado");
         avisoVisibilityMutable.setValue(View.VISIBLE);
+    }
+
+    private boolean validarUsuario(Usuario usr) {
+        return usr.getDni() != null && !usr.getDni().isEmpty() &&
+                usr.getEmail() != null && !usr.getEmail().isEmpty() &&
+                usr.getContrasena() != null && !usr.getContrasena().isEmpty() &&
+                usr.getApellido() != null && !usr.getApellido().isEmpty() &&
+                usr.getNombre() != null && !usr.getNombre().isEmpty();
     }
 
 }
