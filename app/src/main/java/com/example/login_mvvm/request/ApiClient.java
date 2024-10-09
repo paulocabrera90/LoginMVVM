@@ -21,6 +21,7 @@ public class ApiClient {
             FileOutputStream fos = context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(usuario);
+
             oos.close();
             fos.close();
             Toast.makeText(context, "Usuario guardado exitosamente", Toast.LENGTH_SHORT).show();

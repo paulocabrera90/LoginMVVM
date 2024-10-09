@@ -1,7 +1,10 @@
 package com.example.login_mvvm.ui.registro;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -18,6 +21,8 @@ import com.example.login_mvvm.R;
 import com.example.login_mvvm.databinding.ActivityRegistroBinding;
 import com.example.login_mvvm.model.Usuario;
 
+import java.io.FileNotFoundException;
+
 public class RegistroActivity extends AppCompatActivity {
 
     private RegistroActivityViewModel viewModel;
@@ -31,6 +36,8 @@ public class RegistroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityRegistroBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        validarPermisos();
 
         boolean flag = getIntent().getBooleanExtra("isUser", false);
 
@@ -56,7 +63,6 @@ public class RegistroActivity extends AppCompatActivity {
             });
         } else {
             viewModel.getUsuario().observe(this, new Observer<Usuario>() {
-
                 @Override
                 public void onChanged(Usuario usr) {
                     binding.editTextDni.setText(String.valueOf(usr.getDni()));
@@ -64,16 +70,10 @@ public class RegistroActivity extends AppCompatActivity {
                     binding.editTextNombre.setText(usr.getNombre());
                     binding.editTextEmail.setText(usr.getEmail());
                     binding.editTextContrasena.setText(usr.getContrasena());
-                    Uri imageUri = Uri.parse(usr.getImage());
-                    if (imageUri != null) {
-                        try {
-                            binding.imageViewProfile.setImageURI(imageUri);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            binding.imageViewProfile.setImageResource(R.drawable.upload);
-                        }
-                    } else {
-                        binding.imageViewProfile.setImageResource(R.drawable.upload);
+                    try {
+                        cargarImagenByUri(usr);
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
                     }
                 }
             });
@@ -119,6 +119,29 @@ public class RegistroActivity extends AppCompatActivity {
 
     }
 
+    private void validarPermisos() {
+        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.M
+                && checkSelfPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE},1000);
+        }
+
+    }
+
+    private void cargarImagenByUri(Usuario usr) throws FileNotFoundException {
+        Uri imageUri = Uri.parse(usr.getImage());
+        if (imageUri != null) {
+            try {
+                binding.imageViewProfile.setImageURI(imageUri);
+            } catch (Exception e) {
+                e.printStackTrace();
+                binding.imageViewProfile.setImageResource(R.drawable.upload);
+            }
+        } else {
+            binding.imageViewProfile.setImageResource(R.drawable.upload);
+        }
+    }
+
     private void initViews(boolean flag) {
         binding.buttonRegister.setText(flag ? "Editar" : "Registrar");
 
@@ -150,14 +173,7 @@ public class RegistroActivity extends AppCompatActivity {
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == RESULT_OK) {
-                            Intent data = result.getData();
-                            if (data != null) {
-                                Uri uri = data.getData();
-                                uriImage = uri; // Guarda la URI de la imagen seleccionada
-                                binding.imageViewProfile.setImageURI(uriImage); // Establece la imagen en la vista
-                            }
-                        }
+                        viewModel.recibirFoto(result);
                     }
         });
     }

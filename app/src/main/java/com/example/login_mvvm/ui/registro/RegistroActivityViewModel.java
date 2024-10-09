@@ -27,6 +27,7 @@ public class RegistroActivityViewModel extends AndroidViewModel {
     private MutableLiveData<Integer> avisoVisibilityMutable;
     private MutableLiveData<Usuario> usuarioMutable;
     private MutableLiveData<Uri> uriMutableLiveData;
+    private Uri uri;
 
     public RegistroActivityViewModel(@NonNull Application application) {
         super(application);
@@ -77,7 +78,7 @@ public class RegistroActivityViewModel extends AndroidViewModel {
     public void Guardar(Usuario usr) {
         if (validarUsuario(usr)) {
             ApiClient.guardar(context, usr);
-
+            Toast.makeText(context, "Usuario imagen URL Guardar" +  usr.getImage().toString(), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(context, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -107,8 +108,9 @@ public class RegistroActivityViewModel extends AndroidViewModel {
     public void recibirFoto(ActivityResult result) {
         if(result.getResultCode() == RESULT_OK){
             Intent data=result.getData();
-            Uri uri=data.getData();
+            uri=data.getData();
             uriMutableLiveData.setValue(uri);
+            Toast.makeText(context, "Usuario imagen URL" +  uri.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 
