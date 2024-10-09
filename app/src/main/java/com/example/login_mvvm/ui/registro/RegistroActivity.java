@@ -1,8 +1,6 @@
 package com.example.login_mvvm.ui.registro;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -10,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.login_mvvm.databinding.ActivityRegistroBinding;
 import com.example.login_mvvm.model.Usuario;
-import com.example.login_mvvm.request.ApiClient;
 
 public class RegistroActivity extends AppCompatActivity {
 
@@ -78,7 +75,6 @@ public class RegistroActivity extends AppCompatActivity {
     private void initViews(boolean flag) {
         binding.buttonRegister.setText(flag ? "Editar" : "Registrar");
 
-        // Configurar el listener del botón
         binding.buttonRegister.setOnClickListener(view -> {
             Usuario usuario = crearUsuarioDesdeCampos();
             if (flag) {

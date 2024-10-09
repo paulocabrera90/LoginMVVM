@@ -1,6 +1,8 @@
 package com.example.login_mvvm.model;
 
-public class Usuario {
+import java.io.Serializable;
+
+public class Usuario implements Serializable {
 
     private String dni;
     private String email;
@@ -16,7 +18,6 @@ public class Usuario {
         this.email = email;
         this.contrasena = contrasena;
     }
-
     // Getters
     public String getDni() {
         return dni;

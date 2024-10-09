@@ -54,7 +54,7 @@ public class RegistroActivityViewModel extends AndroidViewModel {
 
     public void Guardar(Usuario usr) {
         Usuario usuario = ApiClient.leerDatos(context);
-        if (usuario == null) {
+        if (usuario != null || !usr.getEmail().equals(usuario.getEmail())) {
             ApiClient.guardar(context, usr);
 
             Intent intent = new Intent(context, LoginActivity.class);
@@ -66,8 +66,14 @@ public class RegistroActivityViewModel extends AndroidViewModel {
             avisoVisibilityMutable.setValue(View.VISIBLE);
             Toast.makeText(context.getApplicationContext(), "Usuario registrado", Toast.LENGTH_SHORT).show();
         } else {
-            avisoMutable.setValue("El usuario ya existe");
-            avisoVisibilityMutable.setValue(View.VISIBLE);
+            if (usuario.getEmail().equals(usr.getEmail())) {
+                avisoMutable.setValue("El usuario ya existe");
+                avisoVisibilityMutable.setValue(View.VISIBLE);
+            } else {
+                // O bien, aquí puedes decidir cómo manejar el caso donde el email no coincide
+                avisoMutable.setValue("Email en uso por otro usuario");
+                avisoVisibilityMutable.setValue(View.VISIBLE);
+            }
         }
     }
 
