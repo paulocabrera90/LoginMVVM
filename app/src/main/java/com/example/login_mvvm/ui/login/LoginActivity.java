@@ -1,7 +1,12 @@
 package com.example.login_mvvm.ui.login;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -21,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(LoginActivityViewModel.class);
 
         initViews();
+        validarPermisos();
 
         viewModel.getAviso().observe(this, new Observer<String>() {
             @Override
@@ -57,6 +63,19 @@ public class LoginActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         binding = null;
+    }
+
+    private void validarPermisos() {
+        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.M
+                && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1000);
+            Toast.makeText(this, "PERMISSION CONSIDERED", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(this, "WITHOUT PERMISSION", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 }

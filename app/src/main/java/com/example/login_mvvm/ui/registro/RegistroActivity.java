@@ -72,6 +72,7 @@ public class RegistroActivity extends AppCompatActivity {
                     }
                 }
             });
+            viewModel.setUsuario();
 
             viewModel.getImageUri().observe(this, new Observer<Uri>() {
                 @Override
@@ -86,7 +87,6 @@ public class RegistroActivity extends AppCompatActivity {
                     binding.tvAviso.setText(s);
                 }
             });
-
             viewModel.getAvisoVisibilityMutable().observe(this, new Observer<Integer>() {
                 @Override
                 public void onChanged(Integer visibility) {
@@ -94,7 +94,6 @@ public class RegistroActivity extends AppCompatActivity {
                 }
             });
 
-            viewModel.setUsuario();
         }
 
         viewModel.getUriMutable().observe(this, new Observer<Uri>() {
@@ -104,7 +103,6 @@ public class RegistroActivity extends AppCompatActivity {
                 uriImage = uri;
             }
         });
-
         binding.buttonGaleria.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,17 +111,6 @@ public class RegistroActivity extends AppCompatActivity {
         });
 
         abrirGaleria();
-        validarPermisos();
-
-
-    }
-
-    private void validarPermisos() {
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.M
-                && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1000);
-        }
 
     }
 

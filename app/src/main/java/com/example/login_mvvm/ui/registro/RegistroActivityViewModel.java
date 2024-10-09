@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -117,9 +118,11 @@ public class RegistroActivityViewModel extends AndroidViewModel {
                 );
             }
             uriMutableLiveData.setValue(uri);
-            Toast.makeText(context, "Usuario imagen URL" +  uri.toString(), Toast.LENGTH_SHORT).show();
+            Log.d("SALIDA-RECIBIR-FOTO", uri.toString());
         }
     }
+
+
 
     private boolean validarUsuario(Usuario usr) {
         return usr.getDni() != null && !usr.getDni().isEmpty() &&
