@@ -1,7 +1,15 @@
 package com.example.login_mvvm.ui.registro;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.View;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,6 +21,9 @@ public class RegistroActivity extends AppCompatActivity {
 
     private RegistroActivityViewModel viewModel;
     private ActivityRegistroBinding binding;
+    private Intent intent;
+    private ActivityResultLauncher<Intent> arl;
+    private Uri uriImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +36,7 @@ public class RegistroActivity extends AppCompatActivity {
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())
                 .create(RegistroActivityViewModel.class);
 
+        abrirGaleria();
         initViews(flag);
 
         if(!flag){
@@ -70,6 +82,21 @@ public class RegistroActivity extends AppCompatActivity {
             viewModel.setUsuario();
         }
 
+        viewModel.getUriMutable().observe(this, new Observer<Uri>() {
+            @Override
+            public void onChanged(Uri uri) {
+                binding.imageViewProfile.setImageURI(uri);
+                uriImage = uri;
+            }
+        });
+
+        binding.buttonGaleria.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                arl.launch(intent);
+            }
+        });
+
     }
 
     private void initViews(boolean flag) {
@@ -91,8 +118,21 @@ public class RegistroActivity extends AppCompatActivity {
                 binding.editTextNombre.getText().toString(),
                 binding.editTextApellido.getText().toString(),
                 binding.editTextEmail.getText().toString(),
-                binding.editTextContrasena.getText().toString()
+                binding.editTextContrasena.getText().toString(),
+                uriImage
         );
+    }
+
+    private void abrirGaleria(){
+        intent=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        arl=registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                viewModel.recibirFoto(result);
+            }
+        });
     }
 
     @Override

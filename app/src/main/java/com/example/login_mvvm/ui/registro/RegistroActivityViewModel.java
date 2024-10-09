@@ -1,11 +1,15 @@
 package com.example.login_mvvm.ui.registro;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -21,6 +25,7 @@ public class RegistroActivityViewModel extends AndroidViewModel {
     private MutableLiveData<String> avisoMutable;
     private MutableLiveData<Integer> avisoVisibilityMutable;
     private MutableLiveData<Usuario> usuarioMutable;
+    private MutableLiveData<Uri> uriMutableLiveData;
 
     public RegistroActivityViewModel(@NonNull Application application) {
         super(application);
@@ -41,6 +46,14 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         return avisoVisibilityMutable;
     }
 
+    public LiveData<Uri> getUriMutable(){
+
+        if(uriMutableLiveData==null){
+            uriMutableLiveData=new MutableLiveData<>();
+        }
+        return uriMutableLiveData;
+    }
+
     public LiveData<Usuario> getUsuario() {
         if (usuarioMutable == null) {
             usuarioMutable = new MutableLiveData<>();
@@ -53,8 +66,7 @@ public class RegistroActivityViewModel extends AndroidViewModel {
     }
 
     public void Guardar(Usuario usr) {
-        Usuario usuario = ApiClient.leerDatos(context);
-        if (usuario != null || !usr.getEmail().equals(usuario.getEmail())) {
+        if (validarUsuario(usr)) {
             ApiClient.guardar(context, usr);
 
             Intent intent = new Intent(context, LoginActivity.class);
@@ -66,14 +78,8 @@ public class RegistroActivityViewModel extends AndroidViewModel {
             avisoVisibilityMutable.setValue(View.VISIBLE);
             Toast.makeText(context.getApplicationContext(), "Usuario registrado", Toast.LENGTH_SHORT).show();
         } else {
-            if (usuario.getEmail().equals(usr.getEmail())) {
-                avisoMutable.setValue("El usuario ya existe");
-                avisoVisibilityMutable.setValue(View.VISIBLE);
-            } else {
-                // O bien, aquí puedes decidir cómo manejar el caso donde el email no coincide
-                avisoMutable.setValue("Email en uso por otro usuario");
-                avisoVisibilityMutable.setValue(View.VISIBLE);
-            }
+            avisoMutable.setValue("Debe completar todos los datos");
+            avisoVisibilityMutable.setValue(View.VISIBLE);
         }
     }
 
@@ -87,6 +93,22 @@ public class RegistroActivityViewModel extends AndroidViewModel {
 
         avisoMutable.setValue("Usuario editado");
         avisoVisibilityMutable.setValue(View.VISIBLE);
+    }
+
+    public void recibirFoto(ActivityResult result) {
+        if(result.getResultCode() == RESULT_OK){
+            Intent data=result.getData();
+            Uri uri=data.getData();
+            uriMutableLiveData.setValue(uri);
+        }
+    }
+
+    private boolean validarUsuario(Usuario usr) {
+        return usr.getDni() != null && !usr.getDni().isEmpty() &&
+                usr.getEmail() != null && !usr.getEmail().isEmpty() &&
+                usr.getContrasena() != null && !usr.getContrasena().isEmpty() &&
+                usr.getApellido() != null && !usr.getApellido().isEmpty() &&
+                usr.getNombre() != null && !usr.getNombre().isEmpty();
     }
 
 }

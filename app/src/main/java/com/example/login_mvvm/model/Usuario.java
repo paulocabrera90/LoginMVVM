@@ -1,5 +1,7 @@
 package com.example.login_mvvm.model;
 
+import android.net.Uri;
+
 import java.io.Serializable;
 
 public class Usuario implements Serializable {
@@ -9,14 +11,16 @@ public class Usuario implements Serializable {
     private String contrasena;
     private String apellido;
     private String nombre;
+    private Uri image;
 
     // Constructor
-    public Usuario(String dni, String apellido, String nombre, String email, String contrasena) {
+    public Usuario(String dni, String apellido, String nombre, String email, String contrasena, Uri image) {
         this.dni = dni;
         this.apellido = apellido;
         this.nombre = nombre;
         this.email = email;
         this.contrasena = contrasena;
+        this.image = image;
     }
     // Getters
     public String getDni() {
@@ -69,5 +73,13 @@ public class Usuario implements Serializable {
                 ", apellido='" + apellido + '\'' +
                 ", nombre='" + nombre + '\'' +
                 '}';
+    }
+
+    public Uri getImage() {
+        return image;
+    }
+
+    public void setImage(Uri image) {
+        this.image = image;
     }
 }
