@@ -6,6 +6,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.view.View;
 import android.widget.Toast;
 
@@ -109,6 +110,12 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         if(result.getResultCode() == RESULT_OK){
             Intent data=result.getData();
             uri=data.getData();
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                context.getContentResolver().takePersistableUriPermission (
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                );
+            }
             uriMutableLiveData.setValue(uri);
             Toast.makeText(context, "Usuario imagen URL" +  uri.toString(), Toast.LENGTH_SHORT).show();
         }

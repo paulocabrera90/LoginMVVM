@@ -37,16 +37,11 @@ public class RegistroActivity extends AppCompatActivity {
         binding = ActivityRegistroBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        validarPermisos();
-
         boolean flag = getIntent().getBooleanExtra("isUser", false);
-
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())
                 .create(RegistroActivityViewModel.class);
 
-        abrirGaleria();
         initViews(flag);
-
         if(!flag){
             viewModel.getAvisoMutable().observe(this, new Observer<String>() {
                 @Override
@@ -117,13 +112,17 @@ public class RegistroActivity extends AppCompatActivity {
             }
         });
 
+        abrirGaleria();
+        validarPermisos();
+
+
     }
 
     private void validarPermisos() {
         if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.M
-                && checkSelfPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+                && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE},1000);
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1000);
         }
 
     }
@@ -167,7 +166,8 @@ public class RegistroActivity extends AppCompatActivity {
     }
 
     private void abrirGaleria(){
-        intent=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent=new Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         arl=registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
