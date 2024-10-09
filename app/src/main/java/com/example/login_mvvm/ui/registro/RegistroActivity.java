@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.login_mvvm.R;
 import com.example.login_mvvm.databinding.ActivityRegistroBinding;
 import com.example.login_mvvm.model.Usuario;
 
@@ -55,6 +56,7 @@ public class RegistroActivity extends AppCompatActivity {
             });
         } else {
             viewModel.getUsuario().observe(this, new Observer<Usuario>() {
+
                 @Override
                 public void onChanged(Usuario usr) {
                     binding.editTextDni.setText(String.valueOf(usr.getDni()));
@@ -62,6 +64,24 @@ public class RegistroActivity extends AppCompatActivity {
                     binding.editTextNombre.setText(usr.getNombre());
                     binding.editTextEmail.setText(usr.getEmail());
                     binding.editTextContrasena.setText(usr.getContrasena());
+                    Uri imageUri = Uri.parse(usr.getImage());
+                    if (imageUri != null) {
+                        try {
+                            binding.imageViewProfile.setImageURI(imageUri);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            binding.imageViewProfile.setImageResource(R.drawable.upload);
+                        }
+                    } else {
+                        binding.imageViewProfile.setImageResource(R.drawable.upload);
+                    }
+                }
+            });
+
+            viewModel.getImageUri().observe(this, new Observer<Uri>() {
+                @Override
+                public void onChanged(Uri uri) {
+                    binding.imageViewProfile.setImageURI(uri);
                 }
             });
 
@@ -119,7 +139,7 @@ public class RegistroActivity extends AppCompatActivity {
                 binding.editTextApellido.getText().toString(),
                 binding.editTextEmail.getText().toString(),
                 binding.editTextContrasena.getText().toString(),
-                uriImage
+                uriImage != null ? uriImage.toString() : null
         );
     }
 
@@ -128,10 +148,17 @@ public class RegistroActivity extends AppCompatActivity {
         arl=registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult result) {
-                viewModel.recibirFoto(result);
-            }
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                Uri uri = data.getData();
+                                uriImage = uri; // Guarda la URI de la imagen seleccionada
+                                binding.imageViewProfile.setImageURI(uriImage); // Establece la imagen en la vista
+                            }
+                        }
+                    }
         });
     }
 

@@ -11,10 +11,10 @@ public class Usuario implements Serializable {
     private String contrasena;
     private String apellido;
     private String nombre;
-    private Uri image;
+    private String image;
 
     // Constructor
-    public Usuario(String dni, String apellido, String nombre, String email, String contrasena, Uri image) {
+    public Usuario(String dni, String apellido, String nombre, String email, String contrasena, String image) {
         this.dni = dni;
         this.apellido = apellido;
         this.nombre = nombre;
@@ -75,11 +75,11 @@ public class Usuario implements Serializable {
                 '}';
     }
 
-    public Uri getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(Uri image) {
+    public void setImage(String image) {
         this.image = image;
     }
 }

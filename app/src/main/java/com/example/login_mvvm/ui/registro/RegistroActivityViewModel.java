@@ -15,6 +15,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.login_mvvm.R;
 import com.example.login_mvvm.model.Usuario;
 import com.example.login_mvvm.request.ApiClient;
 import com.example.login_mvvm.ui.login.LoginActivity;
@@ -30,6 +31,10 @@ public class RegistroActivityViewModel extends AndroidViewModel {
     public RegistroActivityViewModel(@NonNull Application application) {
         super(application);
         this.context = application.getApplicationContext();
+
+        uriMutableLiveData = new MutableLiveData<>();
+        uriMutableLiveData.setValue(Uri.parse("android.resource://" + getApplication().getPackageName() + "/" + R.drawable.upload));
+
     }
 
     public LiveData<String> getAvisoMutable() {
@@ -51,6 +56,10 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         if(uriMutableLiveData==null){
             uriMutableLiveData=new MutableLiveData<>();
         }
+        return uriMutableLiveData;
+    }
+
+    public LiveData<Uri> getImageUri() {
         return uriMutableLiveData;
     }
 
