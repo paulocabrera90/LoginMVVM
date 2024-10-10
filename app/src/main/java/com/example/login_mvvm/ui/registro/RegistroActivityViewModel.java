@@ -52,7 +52,7 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         usuarioMutable.setValue(ApiClient.leerDatos(context));
     }
 
-    public void Guardar(Usuario usr) {
+    public void guardar(Usuario usr) {
         if (validarUsuario(usr)) {
             ApiClient.guardar(context, usr);
 
@@ -70,7 +70,7 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         }
     }
 
-    public void Editar(Usuario usr) {
+    public void editar(Usuario usr) {
         ApiClient.guardar(context, usr);
 
         Intent intent = new Intent(context, LoginActivity.class);
@@ -80,6 +80,12 @@ public class RegistroActivityViewModel extends AndroidViewModel {
 
         avisoMutable.setValue("Usuario editado");
         avisoVisibilityMutable.setValue(View.VISIBLE);
+    }
+
+    public void leerDatos(boolean flagIsUser){
+        if(flagIsUser){
+            usuarioMutable.setValue(ApiClient.leerDatos(context));
+        }
     }
 
     private boolean validarUsuario(Usuario usr) {
