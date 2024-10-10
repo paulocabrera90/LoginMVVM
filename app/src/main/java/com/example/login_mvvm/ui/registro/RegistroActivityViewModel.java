@@ -30,14 +30,11 @@ public class RegistroActivityViewModel extends AndroidViewModel {
     private MutableLiveData<Usuario> usuarioMutable;
     private MutableLiveData<Uri> uriMutableLiveData;
     private Uri uri;
+    private String uriString;
 
     public RegistroActivityViewModel(@NonNull Application application) {
         super(application);
         this.context = application.getApplicationContext();
-
-        uriMutableLiveData = new MutableLiveData<>();
-        uriMutableLiveData.setValue(Uri.parse("android.resource://" + getApplication().getPackageName() + "/" + R.drawable.upload));
-
     }
 
     public LiveData<String> getAvisoMutable() {
@@ -62,10 +59,6 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         return uriMutableLiveData;
     }
 
-    public LiveData<Uri> getImageUri() {
-        return uriMutableLiveData;
-    }
-
     public LiveData<Usuario> getUsuario() {
         if (usuarioMutable == null) {
             usuarioMutable = new MutableLiveData<>();
@@ -73,12 +66,9 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         return usuarioMutable;
     }
 
-    public void setUsuario() {
-        usuarioMutable.setValue(ApiClient.leerDatos(context));
-    }
-
-    public void Guardar(Usuario usr) {
+    public void guardar(Usuario usr) {
         if (validarUsuario(usr)) {
+            usr.setImage(uriString);
             ApiClient.guardar(context, usr);
             Toast.makeText(context, "Usuario imagen URL Guardar" +  usr.getImage().toString(), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(context, LoginActivity.class);
@@ -95,7 +85,7 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         }
     }
 
-    public void Editar(Usuario usr) {
+    public void editar(Usuario usr) {
         ApiClient.guardar(context, usr);
 
         Intent intent = new Intent(context, LoginActivity.class);
@@ -109,20 +99,26 @@ public class RegistroActivityViewModel extends AndroidViewModel {
 
     public void recibirFoto(ActivityResult result) {
         if(result.getResultCode() == RESULT_OK){
-            Intent data=result.getData();
-            uri=data.getData();
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                context.getContentResolver().takePersistableUriPermission (
-                        uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                );
-            }
+            Intent data = result.getData();
+            uri = data.getData();
+            uriString = uri.toString();
             uriMutableLiveData.setValue(uri);
-            Log.d("SALIDA-RECIBIR-FOTO", uri.toString());
         }
     }
 
+    public void leerDatos(boolean flagIsUser){
+        if(flagIsUser){
+            usuarioMutable.setValue(ApiClient.leerDatos(context));
+        }
+    }
 
+    public Uri getImageUri(String uri) {
+        if (uri != null) {
+            return Uri.parse(uri);
+        } else {
+            return Uri.parse("android.resource://" + context.getPackageName() + "/" + R.drawable.upload);
+        }
+    }
 
     private boolean validarUsuario(Usuario usr) {
         return usr.getDni() != null && !usr.getDni().isEmpty() &&
@@ -131,5 +127,4 @@ public class RegistroActivityViewModel extends AndroidViewModel {
                 usr.getApellido() != null && !usr.getApellido().isEmpty() &&
                 usr.getNombre() != null && !usr.getNombre().isEmpty();
     }
-
 }

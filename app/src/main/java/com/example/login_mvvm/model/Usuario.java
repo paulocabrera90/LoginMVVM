@@ -14,13 +14,12 @@ public class Usuario implements Serializable {
     private String image;
 
     // Constructor
-    public Usuario(String dni, String apellido, String nombre, String email, String contrasena, String image) {
+    public Usuario(String dni, String apellido, String nombre, String email, String contrasena) {
         this.dni = dni;
         this.apellido = apellido;
         this.nombre = nombre;
         this.email = email;
         this.contrasena = contrasena;
-        this.image = image;
     }
     // Getters
     public String getDni() {
