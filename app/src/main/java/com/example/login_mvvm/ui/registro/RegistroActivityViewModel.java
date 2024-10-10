@@ -25,6 +25,7 @@ public class RegistroActivityViewModel extends AndroidViewModel {
     public RegistroActivityViewModel(@NonNull Application application) {
         super(application);
         this.context = application.getApplicationContext();
+
     }
 
     public LiveData<String> getAvisoMutable() {
@@ -52,9 +53,9 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         usuarioMutable.setValue(ApiClient.leerDatos(context));
     }
 
-    public void Guardar(Usuario usr) {
-        Usuario usuario = ApiClient.leerDatos(context);
-        if (usuario == null) {
+    public void guardar(Usuario usr) {
+       // Usuario usuario = ApiClient.leerDatos(context);
+        if (usr != null) {
             ApiClient.guardar(context, usr);
 
             Intent intent = new Intent(context, LoginActivity.class);
@@ -71,7 +72,7 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         }
     }
 
-    public void Editar(Usuario usr) {
+    public void editar(Usuario usr) {
         ApiClient.guardar(context, usr);
 
         Intent intent = new Intent(context, LoginActivity.class);
@@ -83,4 +84,9 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         avisoVisibilityMutable.setValue(View.VISIBLE);
     }
 
+    public void leerDatos(boolean flagIsUser){
+        if(flagIsUser){
+            usuarioMutable.setValue(ApiClient.leerDatos(context));
+        }
+    }
 }
